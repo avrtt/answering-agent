@@ -113,7 +113,7 @@ After generating a response, you can:
 - **✏️ Edit** - Provide feedback to improve the response
 - **🔄 Regenerate** - Generate a completely new response
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core components
 
