@@ -57,7 +57,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_MODEL=gpt-4
 
 # Application mode
-APP_MODE=local  # "local" or "cloud"
+APP_MODE=local # "local" or "cloud"
 
 # Database (optional, defaults to SQLite)
 DATABASE_URL=sqlite:///./answering_agent.db
