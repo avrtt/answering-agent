@@ -9,6 +9,9 @@ from telegram_bot import bot
 from platform_connectors import PlatformManager
 from message_manager import MessageManager
 from config import settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Base, MessageTypeStyle, PersonConfiguration, WebSearchConfiguration
 
 # Configure logging
 logging.basicConfig(
@@ -16,6 +19,92 @@ logging.basicConfig(
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+
+def create_new_tables():
+    """Create new tables for enhanced features"""
+    try:
+        # Create database engine
+        engine = create_engine(settings.DATABASE_URL)
+        
+        # Create all tables
+        Base.metadata.create_all(engine)
+        
+        logger.info("✅ New tables created successfully!")
+        
+        # Insert default message type styles
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        
+        # Default message type styles
+        default_styles = [
+            {
+                'message_type': 'business',
+                'writing_style': 'professional',
+                'tone': 'formal',
+                'personality_traits': {'professional': True, 'solution-oriented': True},
+                'response_rules': ['Be concise and professional', 'Focus on solutions', 'Use formal language'],
+                'max_length': 300
+            },
+            {
+                'message_type': 'personal',
+                'writing_style': 'conversational',
+                'tone': 'friendly',
+                'personality_traits': {'friendly': True, 'warm': True},
+                'response_rules': ['Be warm and friendly', 'Show personal interest', 'Use casual language'],
+                'max_length': 400
+            },
+            {
+                'message_type': 'support',
+                'writing_style': 'helpful',
+                'tone': 'patient',
+                'personality_traits': {'helpful': True, 'patient': True},
+                'response_rules': ['Be patient and helpful', 'Provide clear solutions', 'Show empathy'],
+                'max_length': 350
+            },
+            {
+                'message_type': 'networking',
+                'writing_style': 'professional',
+                'tone': 'engaging',
+                'personality_traits': {'professional': True, 'engaging': True},
+                'response_rules': ['Be professional but engaging', 'Show interest in connection', 'Be concise'],
+                'max_length': 250
+            },
+            {
+                'message_type': 'sales',
+                'writing_style': 'persuasive',
+                'tone': 'enthusiastic',
+                'personality_traits': {'enthusiastic': True, 'persuasive': True},
+                'response_rules': ['Be enthusiastic about value', 'Focus on benefits', 'Include call to action'],
+                'max_length': 300
+            }
+        ]
+        
+        # Insert default styles
+        for style_data in default_styles:
+            existing = session.query(MessageTypeStyle).filter_by(
+                message_type=style_data['message_type']
+            ).first()
+            
+            if not existing:
+                style = MessageTypeStyle(**style_data)
+                session.add(style)
+                logger.info(f"✅ Added default style for {style_data['message_type']} messages")
+        
+        # Create default web search configuration
+        existing_web_config = session.query(WebSearchConfiguration).first()
+        if not existing_web_config:
+            web_config = WebSearchConfiguration()
+            session.add(web_config)
+            logger.info("✅ Added default web search configuration")
+        
+        session.commit()
+        session.close()
+        
+        logger.info("✅ Migration completed successfully!")
+        
+    except Exception as e:
+        logger.error(f"❌ Error during migration: {e}")
 
 
 class AnsweringAgent:
@@ -31,6 +120,10 @@ class AnsweringAgent:
         logger.info("Starting Answering Agent...")
         
         try:
+            # Run database migration for enhanced features
+            logger.info("Running database migration for enhanced features...")
+            create_new_tables()
+            
             # Connect to all platforms
             logger.info("Connecting to platforms...")
             connection_results = self.platform_manager.connect_all()
@@ -99,12 +192,18 @@ class AnsweringAgent:
                                 content=message_data["content"]
                             )
                                     
-                            # Notify via Telegram
-                            asyncio.run(bot.notify_new_message(
-                                platform=message_data["platform"],
-                                sender=message_data["sender"],
-                                content=message_data["content"]
-                            ))
+                            # Notify via Telegram (using a new event loop for the thread)
+                            try:
+                                loop = asyncio.new_event_loop()
+                                asyncio.set_event_loop(loop)
+                                loop.run_until_complete(bot.notify_new_message(
+                                    platform=message_data["platform"],
+                                    sender=message_data["sender"],
+                                    content=message_data["content"]
+                                ))
+                                loop.close()
+                            except Exception as e:
+                                logger.error(f"Error sending Telegram notification: {e}")
                             
                             logger.info(f"New message from {message_data['platform']}: {message_data['sender']}")
                             

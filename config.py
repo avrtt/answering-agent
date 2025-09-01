@@ -32,6 +32,22 @@ class Settings(BaseSettings):
     MAX_RESPONSE_LENGTH: int = 500
     RESPONSE_STYLE: str = "professional"
     
+    # Web Search Configuration
+    ENABLE_GOOGLE_SEARCH: bool = True
+    ENABLE_PERSONAL_INFO_SEARCH: bool = True
+    GOOGLE_SEARCH_API_KEY: Optional[str] = None
+    GOOGLE_SEARCH_ENGINE_ID: Optional[str] = None
+    
+    # Personal Information Sources
+    PERSONAL_WEBSITE: str = "https://avrtt.github.io/about"
+    GITHUB_PROFILE: str = "https://github.com/avrtt"
+    LINKEDIN_PROFILE: Optional[str] = None
+    TWITTER_PROFILE: Optional[str] = None
+    
+    # Message Type Detection
+    ENABLE_MESSAGE_TYPE_DETECTION: bool = True
+    ENABLE_PERSON_SPECIFIC_RESPONSES: bool = True
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
