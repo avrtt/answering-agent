@@ -57,5 +57,5 @@ Thumbs.db
 answering_agent.db
 *.db-journal
 
-# Terms of reference (already in original)
-terms_of_reference.txt
+# Secrets
+credentials/
