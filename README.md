@@ -1,44 +1,24 @@
-A Telegram bot that helps you manage and respond to messages from multiple platforms (LinkedIn, Gmail, Facebook, Instagram, Telegram) using AI-generated responses.
+A Telegram bot that helps me manage and respond to messages from multiple platforms using AI-generated responses, in one place.
 
 Features:
-- **Multi-Platform Integration**: Connect to LinkedIn, Gmail, Facebook, Instagram, and Telegram
-- **AI-Powered Responses**: Generate contextual responses using OpenAI GPT models
-- **Message Queue Management**: Process messages one by one with user control
-- **Response Customization**: Edit and improve AI-generated responses
-- **Dual Mode Operation**: Local mode (for development) and Cloud mode (for production)
-- **User Preferences**: Configure writing style, personality, and response rules
-- **Message Type Detection**: Automatically detect and style responses based on message type (business, personal, support, networking, sales)
-- **Person-Specific Responses**: Customize responses based on individual people and relationships
-- **Web Search Integration**: Search Google and personal information sources during response generation
-- **Personal Information Search**: Automatically find and include contact details, interests, projects, and other personal information
+- **Multi-platform integration**: Connect to LinkedIn, Gmail, Facebook, Instagram and Telegram, Telegram bot pulls and list all messages I recieve
+- **AI-powered responses**: Generate contextual responses using OpenAI GPT models
+- **Message queue management**: Process messages one by one with user control ("Generate response", "Ignore", "Answer manually")
+- **Response customization**: Edit and improve AI-generated responses
+- **Dual mode operation**: Local mode (for development) and Cloud mode (for production)
+- **User preferences**: Configure writing style, personality and other response rules
+- **Message type detection**: Automatically detect and style responses based on message type (business, personal, support, networking, sales, etc.)
+- **Person-specific responses**: Customize responses based on individual people and relationships
+- **Web search integration**: Search Google and personal information sources during response generation
+- **Personal information search**: Automatically find and include contact details, interests, projects and other personal information 
 
-```
-Use case:
-- Telegram bot pulls and show any message I recieve in LinkedIn, Telegram, Facebook, Instagram or Gmail.
-- Once received any message, the bot holds the conversation until I answer to this message. After answering through the bot, it continues to the next message in the queue. So we have to implement a storage for only active (unanswered) messages.
-- Each message awaits for my decision, basically one of three options (buttons): "Generate response", "Ignore", "Answer manually".
-- If I choose "Generate response", the agent creates a LLM-generated answer to that message.
-- Once generated, the bot asks me to review the response. If I agree, it sends the message to the person. If I want to make changes, I ask it for fixes (in chat bot style), get preview, and then repeat until I'll push the "Send" button.
-- To configure my generated responses, we will create a set of rules that defines my writing style, preferences, interests, personality and so on.
-- If I choose "Ignore", we just read the message, ignore it and skip to the next one.
-- If I choose "Answer manually", the bot should ask me to write a manual response, then send it to the person.
-- The server for the bot works in two modes (and I can switch between them): on cloud (so it's working all the time and I get notifications from the bot even if my computer isn't running) and local (default mode: start the app > start receiving messages from the bot, saving them to the queue). The storage clears after stopping the app in local mode. In cloud mode it stores everything as it received, in the same order.
-- The repository should be well-documented in README.md file.
-My goal is to automate responding and interact with messages through Telegram, so I'm not going to open social media websites or email directly. I want to start the bot locally (to start receiving messages) on startup. I'm using Arch Linux.
-```
-
-## Requirements
-
-- Python 3.8+
-- Telegram Bot Token
-- OpenAI API Key
+Use case: to automate interaction with people and save a lot of time.
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd answering-agent
+   git clone git@github.com:avrtt/personal-agents.git && cd answering-agent
    ```
 
 2. (Optional) Create a virtual environment:
@@ -56,20 +36,13 @@ My goal is to automate responding and interact with messages through Telegram, s
    cp .env.example .env
    ```
 
-5. Configure environment variables:
-   ```bash
-   # Edit .env file with your credentials
-   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-   TELEGRAM_CHAT_ID=your_telegram_chat_id
-   OPENAI_API_KEY=your_openai_api_key
-   APP_MODE=local # or "cloud"
-   ```
+5. Configure environment variables (`.env` file).
 
 ## Configuration
 
 ### Environment variables
 
-Create a `.env` file with the following variables:
+The `.env` file contains:
 
 ```env
 # Telegram bot configuration
@@ -86,19 +59,20 @@ APP_MODE=local # "local" or "cloud"
 # Database (optional, defaults to SQLite)
 DATABASE_URL=sqlite:///./answering_agent.db
 
-# Web Search Configuration
+# Web search configuration
 GOOGLE_SEARCH_API_KEY=your_google_search_api_key
 GOOGLE_SEARCH_ENGINE_ID=your_google_search_engine_id
 
 # Redis (for cloud mode)
 REDIS_URL=redis://localhost:6379/0
-# Personal Information Sources
+
+# Personal information sources
 PERSONAL_WEBSITE=https://avrtt.github.io/about
 GITHUB_PROFILE=https://github.com/avrtt
 LINKEDIN_PROFILE=your_linkedin_profile_url
 TWITTER_PROFILE=your_twitter_profile_url
 
-# Enhanced Features
+# Enhanced features
 ENABLE_MESSAGE_TYPE_DETECTION=true
 ENABLE_PERSON_SPECIFIC_RESPONSES=true
 ENABLE_GOOGLE_SEARCH=true
@@ -133,16 +107,9 @@ ENABLE_PERSONAL_INFO_SEARCH=true
 
 ## Usage
 
-### Initial Setup
+### Initial setup
 
 1. Run the application - it will automatically create the necessary database tables:
-   ```bash
-   python main.py
-   ```
-
-### Running the bot
-
-1. Start the application:
    ```bash
    python main.py
    ```
@@ -152,23 +119,17 @@ ENABLE_PERSONAL_INFO_SEARCH=true
    - Use `/next` to process the next message in queue
    - Follow the interactive prompts to manage messages
 
-Bot commands
-
-- `/start` - Initialize the bot and show welcome message
-- `/next` - Process the next message in queue
-- `/help` - Show help information
-
 ### Message actions
 
 When a new message arrives, you can choose from three actions:
 
-1. **🤖 Generate Response** - AI generates a contextual response using:
+1. **🤖 Generate response** - LLM generates a contextual response using:
    - Message type detection (business, personal, support, networking, sales)
    - Person-specific preferences and conversation history
    - Web search results and personal information
    - User preferences and writing style
 2. **❌ Ignore** - Skip this message
-3. **✍️ Answer Manually** - Write your own response
+3. **✍️ Answer manually** - Write your own response
 
 ### Response management
 
@@ -206,9 +167,9 @@ After generating a response, you can:
 7. **Message Sending**: Responses are sent back to the original platform
 8. **Conversation History**: Update conversation history for future context
 
-## Enhanced Features
+## Enhanced features
 
-### Message Type Detection
+### Message type detection
 
 The agent automatically detects message types and applies appropriate styling:
 
@@ -218,7 +179,7 @@ The agent automatically detects message types and applies appropriate styling:
 - **Networking**: Professional, engaging, relationship-building responses
 - **Sales**: Informative, persuasive, value-focused responses
 
-### Person-Specific Responses
+### Person-specific responses
 
 Configure different response styles for individual people:
 
@@ -233,16 +194,16 @@ Features:
 - Conversation history tracking
 - Platform-specific preferences
 
-### Web Search Integration
+### Web search integration
 
 The agent can search for information during response generation:
 
-- **Google Search**: Find relevant information from the web
-- **Personal Information**: Automatically retrieve contact details, interests, projects
-- **GitHub Integration**: Access your repositories and projects
-- **Personal Website**: Scrape information from your about page
+- **Google search**: Find relevant information from the web
+- **Personal information**: Automatically retrieve contact details, interests, projects
+- **GitHub integration**: Access your repositories and projects
+- **Personal website**: Scrape information from your about page
 
-### Personal Information Sources
+### Personal information sources
 
 Configure your personal information sources in `.env`:
 
@@ -278,7 +239,7 @@ The agent will automatically include relevant information when someone asks abou
 
 ## Testing
 
-The MVP includes mock connectors for all platforms:
+This version still have some mock connectors for all platforms:
 
 - **MockLinkedInConnector** - Simulates LinkedIn messages
 - **MockGmailConnector** - Simulates Gmail messages
@@ -286,7 +247,7 @@ The MVP includes mock connectors for all platforms:
 - **MockFacebookConnector** - Simulates Facebook messages
 - **MockInstagramConnector** - Simulates Instagram messages
 
-### Running Tests
+### Running tests
 
 ```bash
 pytest tests/
@@ -300,14 +261,14 @@ pytest tests/
 2. Configure environment variables
 3. Run `python main.py`
 
-### Production Deployment
+### Production deployment
 
 1. Set `APP_MODE=cloud` in environment
 2. Configure Redis for message queuing
 3. Use a process manager like PM2 or systemd
 4. Set up proper logging and monitoring
 
-### Systemd Service (Arch Linux)
+### Systemd service (Arch Linux)
 
 Create `/etc/systemd/system/answering-agent.service`:
 
@@ -394,18 +355,6 @@ The application logs to stdout. For production, redirect to a log file:
 python main.py > app.log 2>&1
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## To-do
 
 - Automate local run on startup
@@ -414,14 +363,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Enhanced web search capabilities
 - More platform integrations
 - Response quality metrics
-
-## Support
-
-For issues and questions:
-
-1. Check the troubleshooting section
-2. Review the logs for error messages
-3. Create an issue on GitHub
-4. Contact the development team
-
-
